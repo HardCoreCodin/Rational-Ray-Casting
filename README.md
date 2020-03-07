@@ -1,13 +1,13 @@
 # Rational Ray Casting
 
-This is a modified version of the one detailed in:<br>
-<b>[Raycasting Basics with JavaScript](https://www.pikuma.com)</b>
+This is a modified version of the one detailed in: 
+<b>[Raycasting Basics with JavaScript](https://www.pikuma.com)</b><br>
 By: <b>Gustavo Pezzi</b><br>
 <br>
 This work is meant to be a practical demonstration of how <i>transcendental</i> functions <u>can</u> be avoided completely<br>
  in a computer graphics rendering programs, while at the same time making the code simpler and faster.
 
-This work is inspired by the work of professor <b>Norman J. Wildberger</b> of the <b>University of New South Wales (Sidney, Australia</b>).<br>
+This work is inspired by the work of professor <b>Norman J. Wildberger</b> of the <b>University of New South Wales</b><br>
 In particular: <i>[WildTrig: Intro to Rational Trigonometry](https://www.youtube.com/watch?v=GGj399xIssQ&list=PL3C58498718451C47)</i><br>
 
 This implementation does <u><b>not</b> make use of <i><b>any</b></i> angles or measures of distances(!)</u><br>
