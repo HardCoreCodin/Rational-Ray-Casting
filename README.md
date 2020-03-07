@@ -1,7 +1,7 @@
 # Rational Ray Casting
 
 This is a modified version of the one detailed in: 
-<b>[Raycasting Basics with JavaScript](https://www.pikuma.com)</b><br>
+<b>[Raycasting Basics with JavaScript](https://courses.pikuma.com/courses/raycasting)</b><br>
 By: <b>Gustavo Pezzi</b><br>
 <br>
 This work is meant to be a practical demonstration of how <i>transcendental</i> functions <u>can</u> be avoided completely<br>
@@ -27,7 +27,7 @@ as well as for constructing 2D rotation matrices for re-orienting the player and
 <br>
 In the original version 2 distances are computed for the horizontal and vertical hits.<br>
 They were computed as <i>positive</i> distance measures and subsequently used for each ray to:
-1. Determine if the horizontal hit or the vertical hit are the closest.
+1. Determine which of the horizontal vs. vertical hits is the closest.
 2. Compute the height of each pixel column in the 3D viewport.
 
 To fix the perspective distortion (fish-eye lens effect) a trigonometric <b>cos()</b> function was used <br>
