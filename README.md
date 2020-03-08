@@ -64,5 +64,7 @@ This alternative implementation avoid the whole FOV-angle story, by having the f
 It also uses normalized coordinates for the projection plane such that it goes from -1 to 1 with 0 at it's center.<br>
 Half of the width of such a projection plane would be 1, and so a focal length of 1 produces a ratio of 1:1, <br>
 which is equivalent to a half-angle of 45 degrees, of a horizontal FOV angle of 90 degrees.<br>
-A greater-than-one focal length is equivalent to a smaller FOV angle, as the ratio
- 
+The focal length is inversely proportional to the perspective magnitude,<br>
+and so a greater focal length is equivalent to a narrower FOV angle.<br>
+In this alternative implementation this ratio is computed by simply dividing the projection plain's width<br>
+by an explicitly defined focal length.
