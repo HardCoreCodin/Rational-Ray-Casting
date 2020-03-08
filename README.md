@@ -20,26 +20,49 @@ It intentionally avoids <u>any</u> <i>transcendental</i> functions such as:<b>
 It does <b>not</b> achieve that through traditional means such as substitution with tables or approximation.<br>
 Instead, a purely rational approach is taken all throughout. <br>
 
-This implementation relies heavily on the <i>[rational parameterization of the unit circle](https://mathnow.wordpress.com/2009/11/06/a-rational-parameterization-of-the-unit-circle)</i> 
-to produce directional unit vectors.<br>
-These are used to represent the player's orientation and the ray's directions,<br>
-as well as for constructing 2D rotation matrices for re-orienting the player and the rays.<br>
+This implementation relies heavily on the <i>[rational parameterization of the unit circle](https://mathnow.wordpress.com/2009/11/06/a-rational-parameterization-of-the-unit-circle)</i> projecting<br>
+2D position coordinated onto a unit circle, which are then used as pure directional unit vectors.<br>
+These are then used to represent the orientation of the player and the rays,<br>
+as well as for constructing 2D rotation matrices for re-orienting them.<br>
 <br>
-In the original version 2 distances are computed for the horizontal and vertical hits.<br>
-They were computed as <i>positive</i> distance measures and subsequently used for each ray to:
+The original implementation had 2 distances computed for the horizontal and vertical hits.<br>
+They were <i>positive</i> distance measures which were subsequently used for each ray to:
 1. Determine which of the horizontal vs. vertical hits is the closest.
 2. Compute the height of each pixel column in the 3D viewport.
 
-To fix the perspective distortion (fish-eye lens effect) a trigonometric <b>cos()</b> function was used <br>
-to convert the <i>original</i> distance of the closest hit point into a <i>perpendicular</i> distance. <br>
-Since <b>this</b> implementation represents orientations as 2D unit-vectors instead of angles<br>
-the same is achieved with a simple dot product -  <i>projecting</i> the ray's vector onto the player's orientation vector.
-
-The 2 hit-distances were computed originally using the pythagorean theorem, involving a square root.<br>
+The 2 hit distances were computed using the pythagorean theorem (involving a square root).<br>
 They were then compared to determine which of the 2 hits is closest.<br>
-In <b>this</b> implementation, since the only use left for them is a comparison <i>and</i> the numbers were are positive<br>
-the squares of the distances are used for the comparison instead, thereby avoiding the square-root.<br>
-This would not have been possible if the distances were needed to compute the <i>perpendicular distance</i><br>
-since that non-linearity of the squaring would have resulted in distortion to the perspective.<br>
-However since the <i>perpendicular distance</i> is computed here by other means,<br>
-the computation of the distances themselves is avoided entirely.
+Given how these distances are always positive, as long as their only use is for comparing them,<br>
+their squares can be compared instead, avoiding the square root.<br>
+However that was not possible in the original implementation, because these distances were also<br>
+used to compute the height of each pixel column: To get at a <i>perpendicular</i> distance for each ray,<br>
+a trigonometric <b>cos()</b> function was applied onto the closest distance of the two.<br>
+To that end, a square root was needed to be taken to get at that actual closest distance measure.
+
+This alternative implementation represents orientations as 2D unit-vectors, as opposed to angles.<br>
+The same <i>perpendicular</i> distance is attained by <i>projecting</i> each ray's vector onto the<br>
+player's orientation vector by taking their dot product (a.k.a: Inner Product). <br>
+This avoids both the square root and the <b>cos</b> function (both of which are transcendentals).<br>
+And given how the only use left for the ray hit point distances is to compare them, <br>
+the squares of the distances are used for the comparison instead, avoiding the square root entirely.<br>
+
+The original implementation used the <b>tan()</b> function to get at the horizontal and vertical steps.<br>
+That was convenient given how the orientation of the rays was represented as angles.<br>
+
+Given how this alternative implementation represents these orientations as unit vectors,<br>
+the same ratio represented by the <b>tan()</b> is attained by a simple division of the vector's components.
+
+Lastly, the original implementation used the field of view angle (a.k.a: FOV) to represent the<br>
+magnitude of the perspective. This is a very common practice in computer graphics programs.<br>
+However what this angle is invariably used for is just for getting at a <i>ratio</i> measure<br>
+between the width of the projection plane and it's distance from the origin, using a <b>tan()</b> function.<br>
+In real world pin-hole camera scenarios, the distance to the projection plane is called the <i>focal length</i>.<br>
+It is measured in real world units, and it's <i>ratio</i> to a <i>fixed</i> size of the projection plane,<br>
+is what's driving the magnitude of the perspective. So it is this <i>ratio</i> that actually determines that. 
+
+This alternative implementation avoid the whole FOV-angle story, by having the focal length as the input instead.<br>
+It also uses normalized coordinates for the projection plane such that it goes from -1 to 1 with 0 at it's center.<br>
+Half of the width of such a projection plane would be 1, and so a focal length of 1 produces a ratio of 1:1, <br>
+which is equivalent to a half-angle of 45 degrees, of a horizontal FOV angle of 90 degrees.<br>
+A greater-than-one focal length is equivalent to a smaller FOV angle, as the ratio
+ 

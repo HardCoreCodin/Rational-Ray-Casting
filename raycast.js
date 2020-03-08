@@ -5,15 +5,17 @@ const MAP_NUM_COLS = 15;
 const WINDOW_WIDTH = MAP_NUM_COLS * TILE_SIZE;
 const WINDOW_HEIGHT = MAP_NUM_ROWS * TILE_SIZE;
 
-const FOCAL_LENGTH = 3.5;
-const PROJECTION_PLANE_WIDTH = 2 / FOCAL_LENGTH;
-const FIRST_RAY_ROTATION_AMOUNT = -PROJECTION_PLANE_WIDTH / 2;
+const FOCAL_LENGTH = 1.8;
+const DISTANCE_TO_PROJECTION_PLANE = FOCAL_LENGTH * WINDOW_WIDTH / 2;
+const PROJECTION_PLANE_WIDTH = 1 + -(-1); // -1 to 1 (2)
+const PROJECTION_PLANE_WIDTH_IF_FOCAL_LENGTH_WAS_ONE = PROJECTION_PLANE_WIDTH * (1 / (FOCAL_LENGTH * 2));
+const FIRST_RAY_ROTATION_AMOUNT = -(PROJECTION_PLANE_WIDTH_IF_FOCAL_LENGTH_WAS_ONE / 2);
 
 const WALL_STRIP_WIDTH = 1;
 const NUM_RAYS = WINDOW_WIDTH / WALL_STRIP_WIDTH;
 
 const MINIMAP_SCALE_FACTOR = 0.2;
-const RAY_STEP = PROJECTION_PLANE_WIDTH / NUM_RAYS;
+const RAY_STEP = PROJECTION_PLANE_WIDTH_IF_FOCAL_LENGTH_WAS_ONE / NUM_RAYS;
 
 class Map {
     constructor() {
@@ -68,6 +70,7 @@ class vec2 {
         // Project a point on a unit circle from a position on a vertical line of "x = 1" towards the origin
         const t2 = t*t;
         const mult = 1 / (1 + t2);
+
         this.x = (1 - t2) * mult;
         this.y = (2 * t) * mult;
     }
@@ -77,6 +80,19 @@ class vec2 {
         const y = this.y;
         this.x = matrix.m11*x + matrix.m21*y;
         this.y = matrix.m12*x + matrix.m22*y;
+    }
+
+    dot(other) {
+        return (
+            this.x * other.x
+        ) + (
+            this.y * other.y
+        );
+    }
+
+    setDirectionFromPointAtoPointB(a, b) {
+        this.x = b.x - a.x;
+        this.y = b.y - a.y;
     }
 }
 
@@ -335,18 +351,18 @@ function castAllRays() {
 }
 
 function render3DProjectedWalls() {
+    const player_to_ray_wall_hit = new vec2();
+
     // loop every ray in the array of rays
     for (var i = 0; i < NUM_RAYS; i++) {
         var ray = rays[i];
 
         // get the perpendicular distance to the wall to fix fishbowl distortion
-        var correctWallDistance = (ray.wallHit.x - player.position.x)*player.orientation.x + (ray.wallHit.y - player.position.y)*player.orientation.y;
-
-        // calculate the distance to the projection plane
-        var distanceProjectionPlane = (WINDOW_WIDTH / 2) / PROJECTION_PLANE_WIDTH;
+        player_to_ray_wall_hit.setDirectionFromPointAtoPointB(player.position, ray.wallHit);
+        var correctWallDistance = player_to_ray_wall_hit.dot(player.orientation);
 
         // projected wall height
-        var wallStripHeight = (TILE_SIZE / correctWallDistance) * distanceProjectionPlane;
+        var wallStripHeight = (TILE_SIZE / correctWallDistance) * DISTANCE_TO_PROJECTION_PLANE;
 
         // compute the transparency based on the wall distance
         var alpha = 200 / correctWallDistance;
