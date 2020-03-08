@@ -20,8 +20,8 @@ It intentionally avoids <u>any</u> <i>transcendental</i> functions such as:<b>
 It does <b>not</b> achieve that through traditional means such as substitution with tables or approximation.<br>
 Instead, a purely rational approach is taken all throughout. <br>
 
-This implementation relies heavily on the <i>[rational parameterization of the unit circle](https://mathnow.wordpress.com/2009/11/06/a-rational-parameterization-of-the-unit-circle)</i> projecting<br>
-2D position coordinated onto a unit circle, which are then used as pure directional unit vectors.<br>
+This implementation relies heavily on the <i>[rational parameterization of the unit circle](https://mathnow.wordpress.com/2009/11/06/a-rational-parameterization-of-the-unit-circle)</i><br>
+by projecting 2D position coordinates onto a unit circle to be used as pure directional unit vectors.<br>
 These are then used to represent the orientation of the player and the rays,<br>
 as well as for constructing 2D rotation matrices for re-orienting them.<br>
 <br>
