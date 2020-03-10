@@ -52,19 +52,28 @@ That was convenient given how the orientation of the rays was represented as ang
 Given how this alternative implementation represents these orientations as unit vectors,<br>
 the same ratio represented by the <b>tan()</b> is attained by a simple division of the vector's components.
 
-Lastly, the original implementation used the field of view angle (a.k.a: FOV) to represent the<br>
-magnitude of the perspective. This is a very common practice in computer graphics programs.<br>
-However what this angle is invariably used for is just for getting at a <i>ratio</i> measure<br>
-between the width of the projection plane and it's distance from the origin, using a <b>tan()</b> function.<br>
-In real world pin-hole camera scenarios, the distance to the projection plane is called the <i>focal length</i>.<br>
-It is measured in real world units, and it's <i>ratio</i> to a <i>fixed</i> size of the projection plane,<br>
-is what's driving the magnitude of the perspective. So it is this <i>ratio</i> that actually determines that. 
+Lastly, the original implementation used an angle for the field of view (a.k.a: FOV).<br>
+This determines the spread between the origin and the projection plane.<br>
+Using an angle to represent this spread is a very common practice in computer graphics programs.<br>
+For a given projection plane, changing this angle affects the strength of the perspective distortion.<br>
+However, what this angle is invariably used for is just for getting at a certain <i>ratio</i>:<br>
+In a pin-hole camera model, the distance of the pin-hole to the projection plane is the <i>focal length</i>.<br>
+The <i>ratio</i> between this focal length and (half-of)the width of the projection plane,<br>
+is the <i>actual</i> factor that determines the spread (the strength of the perspective distortion)<br>
+This <i>ratio</i> (which can be termed the FOV-ratio) can be changed by changing either<br>
+the focal length or the width of the projection plane. An FOV angle is just one way to represent this ratio,<br>
+independently from the actual mesurements of the focal length and projection plane width. 
 
-This alternative implementation avoid the whole FOV-angle story, by having the focal length as the input instead.<br>
-It also uses normalized coordinates for the projection plane such that it goes from -1 to 1 with 0 at it's center.<br>
-Half of the width of such a projection plane would be 1, and so a focal length of 1 produces a ratio of 1:1, <br>
-which is equivalent to a half-angle of 45 degrees or a horizontal FOV angle of 90 degrees.<br>
-The focal length is inversely proportional to the perspective magnitude such that <br>
-a longer focal length is equivalent to a narrower field of view.<br>
-In this alternative implementation the ratio is computed by simply dividing the projection plain's width<br>
-by an explicitly defined focal length.
+This alternative implementation avoid using an FOV-angle, by having the focal length as the input instead.<br>
+A normalized coordinate system for the projection plane would have it set with a width of 2 (-1 to 1).<br>
+A focal length of 1 in such a case would yield an FOV-ratio of 1:1, since half of the width of 2 is 1.<br> 
+This would be equivalent to a field of view angle of 90 degrees (or a half-angle of 45 degrees).<br>
+Given such a projection plane of fixed size, the focal length is inversely proportional to the strength<br>
+of the perspective distortion, such that a longer focal length is equivalent to a narrower field of view.<br>
+The FOV-ratio can thus be computed very simply by dividing half of the width (1) by the focal length.<br>
+
+In this implementation ray directions are produced using the parametric form of the unit circle.<br>
+However this requires a focal length of 1. When the focal length is defined as a number other than 1,<br>
+the projection plane could instead be scaled by an inverse amount to complensate.<br>
+This maintains the same FOV-ratio (perspective sterngth), while keeping the focal length at 1.<br>
+It is a very common practice for perspective projection in graphics APIs (such as OpenGL or Direct3D).<br>
